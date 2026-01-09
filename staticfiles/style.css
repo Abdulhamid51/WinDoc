@@ -1,0 +1,125 @@
+@page {
+    size: A4;
+    margin: 20mm;
+}
+
+body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #f0f4f8;
+    color: #333;
+}
+
+.page {
+    width: 210mm;
+    min-height: 297mm;
+    background: #ffffff;
+    padding: 15mm;
+    margin: auto;
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+h1 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+h1 span {
+    font-size: 18px;
+}
+
+h2 {
+    text-align: center;
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    margin-top: 20px;
+    font-size: 16px;
+    border-bottom: 1px solid #000;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 13.5px;
+}
+
+th, td {
+    border: 1px solid #000;
+    padding: 6px;
+    vertical-align: middle;
+}
+
+th {
+    background: #e6f2fa;
+    width: 20%;
+    text-align: left;
+}
+
+.photo-cell {
+    text-align: center;
+    background: #e6f2fa;
+}
+
+.photo-box {
+    width: 30mm;
+    height: 40mm;
+    border: 1px solid #000;
+    margin: auto;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+label {
+    margin-right: 10px;
+}
+
+.paragraph {
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 15px 0;
+}
+
+.sign {
+    margin-top: 30px;
+    font-size: 12px;
+}
+
+.signature {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.signature .line {
+    width: 250px;
+    border-bottom: 1px solid #000;
+}
+
+.date {
+    margin-top: 20px;
+    text-align: right;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        background: none;
+        padding: 0;
+    }
+    .page {
+        margin: 0;
+        box-shadow: none;
+        padding: 0;
+    }
+}

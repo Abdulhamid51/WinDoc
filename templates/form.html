@@ -1,0 +1,746 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form</title>
+    <link rel="stylesheet" href="{% static 'google-form.css' %}">
+    <!-- Tom Select CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+    <style>
+        .ts-control {
+            border: none !important;
+            border-bottom: 1px solid #dadce0 !important;
+            padding: 8px 0 !important;
+            background: transparent !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+        }
+
+        .ts-wrapper.focus .ts-control {
+            border-bottom: 2px solid #673ab7 !important;
+        }
+
+        .ts-dropdown {
+            border-radius: 4px !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <form method="POST" action="{% url 'main:form' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="applicant_id" id="applicant-id-input">
+
+            <!-- Title Card -->
+            <div class="form-header-card">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 8px;">
+                    <a href="{% url 'main:logout' %}"
+                        style="color: var(--primary-color); text-decoration: none; font-size: 14px; font-weight: 500;">Sign
+                        Out</a>
+                </div>
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'success' %}success{% else %}error{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                <h1 class="form-title">Application Form</h1>
+                <p class="form-description">Please fill out the application details below.</p>
+                
+                <!-- Photo Upload Section -->
+                <div style="margin-top: 20px; display: flex; align-items: center; gap: 20px;">
+                    <div id="photo-preview-container" style="width: 100px; height: 130px; border: 1px dashed #dadce0; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8f9fa;">
+                        <span id="no-photo-text" style="font-size: 12px; color: #70757a; text-align: center;">No Photo</span>
+                        <img id="photo-preview" src="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    </div>
+                    <div>
+                        <label for="photo" class="question-title" style="font-size: 14px; display: block; margin-bottom: 8px;">Applicant Photo (3x4)</label>
+                        <input type="file" id="photo" name="photo" accept="image/*" style="font-size: 14px;" onchange="previewImage(this)">
+                    </div>
+                </div>
+
+                <div style="border-top: 1px solid #dadce0; margin: 24px 0 16px;"></div>
+
+                <div style="margin-top: 20px; margin-bottom: 20px;">
+                    <label for="applicant-select" class="question-title" style="font-size: 14px;">Search for previously
+                        registered applicants...</label>
+                    <select id="applicant-select" placeholder="Enter name..." autocomplete="off">
+                        <option value="">Enter name...</option>
+                    </select>
+                    <div style="display: flex; gap: 10px; margin-top: 8px;">
+                        <button type="button" id="delete-applicant-btn" class="delete-btn" style="margin-top: 0;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                            Delete
+                        </button>
+                        <a href="#" id="view-doc-btn" target="_blank" class="delete-btn"
+                            style="margin-top: 0; background-color: #e8f0fe; color: #1a73e8; border-color: #d2e3fc; text-decoration: none; display: none;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
+                            </svg>
+                            View & Print
+                        </a>
+                    </div>
+                </div>
+
+                <p class="form-description" style="color: #d93025; font-size: 12px;">* Required</p>
+            </div>
+
+            <!-- VISA PROCESS -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Visa Process</h2>
+                <div class="question-grid">
+                    <div>
+                        <label class="question-title">Oldin Otkaz <span class="required-asterisk">*</span></label>
+                        <div class="option-group" style="flex-direction: row; gap: 24px;">
+                            <label class="option-label">
+                                <input type="radio" name="oldin_otkaz" value="True" class="option-input" required>
+                                Yes
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="oldin_otkaz" value="False" class="option-input">
+                                No
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="country" class="question-title">Country <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="country" name="country" class="text-input" placeholder="Your answer"
+                                required>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="bankshot" class="question-title">Bankshot <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="bankshot" name="bankshot" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PASSPORT INFO -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Passport Info</h2>
+                <div class="question-grid">
+                    <div class="full-width">
+                        <label for="full_name" class="question-title">Full Name <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="full_name" name="full_name" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="dob" class="question-title">Date of Birth <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="dob" name="dob" class="text-input" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="passport_number" class="question-title">Passport Number <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="passport_number" name="passport_number" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="passport_issue" class="question-title">Passport Issue Date <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="passport_issue" name="passport_issue" class="text-input" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="passport_expiry" class="question-title">Passport Expiry Date <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="passport_expiry" name="passport_expiry" class="text-input" required>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label class="question-title">Gender <span class="required-asterisk">*</span></label>
+                        <div class="option-group" style="flex-direction: row; gap: 24px;">
+                            <label class="option-label">
+                                <input type="radio" name="gender" value="M" class="option-input" required>
+                                Male
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="gender" value="F" class="option-input">
+                                Female
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACT -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Contact</h2>
+                <div class="question-grid">
+                    <div>
+                        <label for="phone" class="question-title">Phone <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="phone" name="phone" class="text-input" placeholder="Your answer"
+                                required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="email" class="question-title">Email <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="email" id="email" name="email" class="text-input" placeholder="Your answer"
+                                required>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="address" class="question-title">Address <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="address" name="address" class="text-input" placeholder="Your answer"
+                                required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="zipcode" class="question-title">Zipcode <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="zipcode" name="zipcode" class="text-input" placeholder="Your answer"
+                                required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CERTIFICATE -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Certificate</h2>
+                <div class="question-grid">
+                    <div class="full-width">
+                        <label class="question-title">Test Type <span class="required-asterisk">*</span></label>
+                        <div class="option-group" style="flex-direction: row; gap: 24px;">
+                            <label class="option-label">
+                                <input type="radio" name="test_type" value="IELTS" class="option-input" required>
+                                IELTS
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="test_type" value="TOPIK" class="option-input">
+                                TOPIK
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="test_type" value="TOEFL" class="option-input">
+                                TOEFL
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="score" class="question-title">Score <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="number" step="0.01" id="score" name="score" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="test_date" class="question-title">Test Date <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="test_date" name="test_date" class="text-input" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="expiry_date" class="question-title">Expiry Date <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="expiry_date" name="expiry_date" class="text-input" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UNIVERSITY INFO -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">University Info</h2>
+                <div class="question-grid">
+                    <div class="full-width">
+                        <label class="question-title">Education Level <span class="required-asterisk">*</span></label>
+                        <div class="option-group" style="flex-direction: row; gap: 24px;">
+                            <label class="option-label">
+                                <input type="radio" name="education_level" value="bachelor" class="option-input"
+                                    required onclick="loadUniversities('bachelor')">
+                                Bakalavr
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="education_level" value="master" class="option-input"
+                                    onclick="loadUniversities('master')">
+                                Magistr
+                            </label>
+                            <label class="option-label">
+                                <input type="radio" name="education_level" value="college" class="option-input"
+                                    onclick="loadUniversities('college')">
+                                College
+                            </label>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="university-select" class="question-title">Select University <span
+                                class="required-asterisk">*</span></label>
+                        <div style="margin-top: 4px;">
+                            <div id="uni-select-container">
+                                <select id="university-select" placeholder="Select university..." autocomplete="off">
+                                    <option value="">First select education level...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uni_phone" class="question-title">University Phone <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="uni_phone" name="uni_phone" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uni_website" class="question-title">University Website</label>
+                        <div class="input-group">
+                            <input type="url" id="uni_website" name="uni_website" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uni_email" class="question-title">University Email <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="email" id="uni_email" name="uni_email" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="uni_address" class="question-title">University Address <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="uni_address" name="uni_address" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="diplom_number" class="question-title">Diploma Number <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="diplom_number" name="diplom_number" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="gpa" class="question-title">GPA <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="number" step="0.01" id="gpa" name="gpa" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="grad_date" class="question-title">Graduation Date <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="grad_date" name="grad_date" class="text-input" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="prev_major" class="question-title">Previous Major <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="prev_major" name="prev_major" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAMILY INFO - FATHER -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Father Info</h2>
+                <div class="question-grid">
+                    <div class="full-width">
+                        <label for="father_name" class="question-title">Father Name <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="father_name" name="father_name" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="father_passport" class="question-title">Father Passport</label>
+                        <div class="input-group">
+                            <input type="text" id="father_passport" name="father_passport" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="father_dob" class="question-title">Father DOB</label>
+                        <div class="input-group">
+                            <input type="date" id="father_dob" name="father_dob" class="text-input">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="father_phone" class="question-title">Father Phone</label>
+                        <div class="input-group">
+                            <input type="text" id="father_phone" name="father_phone" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="father_job" class="question-title">Father Occupation</label>
+                        <div class="input-group">
+                            <input type="text" id="father_job" name="father_job" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAMILY INFO - MOTHER -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Mother Info</h2>
+                <div class="question-grid">
+                    <div class="full-width">
+                        <label for="mother_name" class="question-title">Mother Name <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="mother_name" name="mother_name" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mother_passport" class="question-title">Mother Passport</label>
+                        <div class="input-group">
+                            <input type="text" id="mother_passport" name="mother_passport" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mother_dob" class="question-title">Mother DOB</label>
+                        <div class="input-group">
+                            <input type="date" id="mother_dob" name="mother_dob" class="text-input">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mother_phone" class="question-title">Mother Phone</label>
+                        <div class="input-group">
+                            <input type="text" id="mother_phone" name="mother_phone" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mother_job" class="question-title">Mother Occupation</label>
+                        <div class="input-group">
+                            <input type="text" id="mother_job" name="mother_job" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="form-footer">
+                <button type="submit" class="submit-btn" style="background-color: #673ab7;">Submit</button>
+                <button type="button" class="clear-form" style="color: #673ab7;">Clear form</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Initialize Tom Select and University Logic -->
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('photo-preview');
+            const noPhoto = document.getElementById('no-photo-text');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    noPhoto.style.display = 'none';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        var universitySelect;
+        var applicantSelect;
+        var currentApplicantId = null;
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Auto open document if just saved
+            {% if open_doc_id %}
+                window.open("{% url 'main:application_document' open_doc_id %}", "_blank");
+            {% endif %}
+
+            const deleteBtn = document.getElementById('delete-applicant-btn');
+            const modal = document.getElementById('delete-modal');
+            const confirmDeleteBtn = document.getElementById('confirm-delete');
+            const cancelDeleteBtn = document.getElementById('cancel-delete');
+
+            // Applicant select initialization
+            applicantSelect = new TomSelect("#applicant-select", {
+                valueField: 'id',
+                labelField: 'full_name',
+                searchField: 'full_name',
+                options: [],
+                create: false,
+                onChange: function (pk) {
+                    const applicantIdInput = document.getElementById('applicant-id-input');
+                    const deleteBtn = document.getElementById('delete-applicant-btn');
+                    const viewBtn = document.getElementById('view-doc-btn');
+
+                    if (pk) {
+                        currentApplicantId = pk;
+                        applicantIdInput.value = pk;
+                        deleteBtn.style.display = 'flex';
+                        viewBtn.style.display = 'flex';
+                        viewBtn.href = `/document/${pk}/`;
+                        loadApplicantDetails(pk);
+                    } else {
+                        currentApplicantId = null;
+                        applicantIdInput.value = '';
+                        deleteBtn.style.display = 'none';
+                        viewBtn.style.display = 'none';
+                        viewBtn.href = "#";
+                    }
+                }
+            });
+
+            // Modal logic
+            deleteBtn.addEventListener('click', () => {
+                modal.style.display = 'flex';
+            });
+
+            cancelDeleteBtn.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            confirmDeleteBtn.addEventListener('click', () => {
+                if (currentApplicantId) {
+                    const formData = new FormData();
+                    formData.append('pk', currentApplicantId);
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                    fetch("{% url 'main:delete_applicant' %}", {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                window.location.reload();
+                            } else {
+                                alert('Error deleting record');
+                            }
+                        })
+                        .catch(err => console.error(err));
+                }
+            });
+
+            // Load initial applicants
+            fetch("{% url 'main:get_applicants' %}")
+                .then(response => response.json())
+                .then(data => {
+                    applicantSelect.addOptions(data);
+                });
+
+            universitySelect = new TomSelect("#university-select", {
+                valueField: 'id',
+                labelField: 'name',
+                searchField: 'name',
+                options: [],
+                create: false,
+                onChange: function (pk) {
+                    if (pk) loadUniversityDetails(pk);
+                }
+            });
+
+            // Clear form functionality
+            document.querySelector('.clear-form').addEventListener('click', function () {
+                if (confirm('Are you sure you want to clear the form?')) {
+                    const form = this.closest('form');
+                    form.reset();
+                    document.getElementById('applicant-id-input').value = '';
+                    
+                    // Clear photo preview
+                    const preview = document.getElementById('photo-preview');
+                    const noPhoto = document.getElementById('no-photo-text');
+                    document.getElementById('photo').value = '';
+                    preview.src = '';
+                    preview.style.display = 'none';
+                    noPhoto.style.display = 'block';
+
+                    // Clear Tom Select instances
+                    if (applicantSelect) applicantSelect.clear();
+                    if (universitySelect) {
+                        universitySelect.clear();
+                        universitySelect.clearOptions();
+                        universitySelect.settings.placeholder = "First select education level...";
+                        universitySelect.control_input.placeholder = "First select education level...";
+                    }
+                }
+            });
+        });
+
+        function loadApplicantDetails(pk) {
+            fetch("{% url 'main:get_applicant_details' %}?pk=" + pk)
+                .then(response => response.json())
+                .then(data => {
+                    // Fill all fields
+                    // VISA
+                    document.querySelector(`input[name="oldin_otkaz"][value="${data.oldin_otkaz ? 'True' : 'False'}"]`).checked = true;
+                    document.getElementById('country').value = data.country || '';
+                    document.getElementById('bankshot').value = data.bankshot || '';
+
+                    // PASSPORT
+                    document.getElementById('full_name').value = data.full_name || '';
+                    document.getElementById('dob').value = data.dob || '';
+                    document.getElementById('passport_number').value = data.passport_number || '';
+                    document.getElementById('passport_issue').value = data.passport_issue || '';
+                    document.getElementById('passport_expiry').value = data.passport_expiry || '';
+                    if (data.gender) {
+                        document.querySelector(`input[name="gender"][value="${data.gender}"]`).checked = true;
+                    }
+
+                    // CONTACT
+                    document.getElementById('phone').value = data.phone || '';
+                    document.getElementById('email').value = data.email || '';
+                    document.getElementById('address').value = data.address || '';
+                    document.getElementById('zipcode').value = data.zipcode || '';
+
+                    // CERTIFICATE
+                    if (data.test_type) {
+                        document.querySelector(`input[name="test_type"][value="${data.test_type}"]`).checked = true;
+                    }
+                    document.getElementById('score').value = data.score || '';
+                    document.getElementById('test_date').value = data.test_date || '';
+                    document.getElementById('expiry_date').value = data.expiry_date || '';
+
+                    // UNIVERSITY INFO
+                    if (data.education_level) {
+                        const eduRadio = document.querySelector(`input[name="education_level"][value="${data.education_level}"]`);
+                        if (eduRadio) {
+                            eduRadio.checked = true;
+                            // Trigger university reload but we might not have the specific uni ID to select
+                            // For simplicity, we fill the static fields directly
+                        }
+                    }
+                    document.getElementById('uni_phone').value = data.uni_phone || '';
+                    document.getElementById('uni_website').value = data.uni_website || '';
+                    document.getElementById('uni_email').value = data.uni_email || '';
+                    document.getElementById('uni_address').value = data.uni_address || '';
+                    document.getElementById('diplom_number').value = data.diplom_number || '';
+                    document.getElementById('gpa').value = data.gpa || '';
+                    document.getElementById('grad_date').value = data.grad_date || '';
+                    document.getElementById('prev_major').value = data.prev_major || '';
+
+                    // FATHER
+                    document.getElementById('father_name').value = data.father_name || '';
+                    document.getElementById('father_passport').value = data.father_passport || '';
+                    document.getElementById('father_dob').value = data.father_dob || '';
+                    document.getElementById('father_phone').value = data.father_phone || '';
+                    document.getElementById('father_job').value = data.father_job || '';
+
+                    // MOTHER
+                    document.getElementById('mother_name').value = data.mother_name || '';
+                    document.getElementById('mother_passport').value = data.mother_passport || '';
+                    document.getElementById('mother_dob').value = data.mother_dob || '';
+                    document.getElementById('mother_phone').value = data.mother_phone || '';
+                    document.getElementById('mother_job').value = data.mother_job || '';
+
+                    // PHOTO PREVIEW
+                    const preview = document.getElementById('photo-preview');
+                    const noPhoto = document.getElementById('no-photo-text');
+                    if (data.photo_url) {
+                        preview.src = data.photo_url;
+                        preview.style.display = 'block';
+                        noPhoto.style.display = 'none';
+                    } else {
+                        preview.src = '';
+                        preview.style.display = 'none';
+                        noPhoto.style.display = 'block';
+                    }
+
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+        }
+
+        function loadUniversities(level) {
+            if (!universitySelect) {
+                return;
+            }
+            universitySelect.clear();
+            universitySelect.clearOptions();
+
+            // Set placeholder via settings and control input
+            universitySelect.settings.placeholder = "Loading universities...";
+            universitySelect.control_input.placeholder = "Loading universities...";
+
+            fetch("{% url 'main:get_universities' %}?level=" + level)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    universitySelect.addOptions(data);
+
+                    const newPlaceholder = data.length > 0 ? "Search and select university..." : "No universities found for this level";
+                    universitySelect.settings.placeholder = newPlaceholder;
+                    universitySelect.control_input.placeholder = newPlaceholder;
+                })
+                .catch(error => {
+                    universitySelect.settings.placeholder = "Error loading universities";
+                    universitySelect.control_input.placeholder = "Error loading universities";
+                });
+        }
+
+        function loadUniversityDetails(pk) {
+            fetch("{% url 'main:get_university_details' %}?pk=" + pk)
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('uni_phone').value = data.phone || '';
+                    document.getElementById('uni_website').value = data.website || '';
+                    document.getElementById('uni_email').value = data.email || '';
+                    document.getElementById('uni_address').value = data.address || '';
+                })
+                .catch(error => {
+                });
+        }
+    </script>
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">Delete record?</h3>
+            <p class="modal-text">Are you sure you want to delete this applicant's record? This action cannot be undone.
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary" id="cancel-delete">Cancel</button>
+                <button type="button" class="btn-danger" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,6 +1,38 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.contrib import messages
 from .models import *
+
+from django.contrib.auth import authenticate, login, logout
+
+class UserLoginView(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('main:form')
+        return render(request, 'login.html')
+
+    def post(self, request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('main:form')
+        else:
+            messages.error(request, 'Invalid username or password.')
+            return render(request, 'login.html')
+
+class UserLogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('main:login')
+
+class ApplicationDocumentView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        application = get_object_or_404(Application, pk=pk)
+        return render(request, 'document.html', {'app': application})
 
 class IndexView(View):
     def get(self, request):
@@ -21,3 +53,169 @@ class DetailView(View):
             "projects":projects
         }
         return render(request, 'doc.html', data)
+    
+class FormView(LoginRequiredMixin, View):
+    def get(self, request):
+        open_doc_id = request.session.pop('open_doc_id', None)
+        return render(request, 'form.html', {'open_doc_id': open_doc_id})
+
+    def post(self, request):
+        # Extract data from request.POST
+        data = request.POST
+        applicant_id = data.get('applicant_id')
+        
+        # Helper to convert 'True'/'False' strings to boolean
+        def to_bool(val):
+            return val == 'True'
+
+        # Helper to handle empty date strings
+        def to_date(val):
+            return val if val else None
+
+        try:
+            fields = {
+                # VISA PROCESS
+                'oldin_otkaz': to_bool(data.get('oldin_otkaz', 'False')),
+                'country': data.get('country'),
+                'bankshot': data.get('bankshot'),
+                
+                # PASSPORT INFO
+                'full_name': data.get('full_name'),
+                'dob': to_date(data.get('dob')),
+                'passport_number': data.get('passport_number'),
+                'passport_issue': to_date(data.get('passport_issue')),
+                'passport_expiry': to_date(data.get('passport_expiry')),
+                'gender': data.get('gender'),
+                
+                # CONTACT
+                'phone': data.get('phone'),
+                'email': data.get('email'),
+                'address': data.get('address'),
+                'zipcode': data.get('zipcode'),
+                
+                # CERTIFICATE
+                'test_type': data.get('test_type'),
+                'score': data.get('score') if data.get('score') else 0,
+                'test_date': to_date(data.get('test_date')),
+                'expiry_date': to_date(data.get('expiry_date')),
+                
+                # UNIVERSITY INFO
+                'education_level': data.get('education_level'),
+                'uni_phone': data.get('uni_phone'),
+                'uni_website': data.get('uni_website', ''),
+                'uni_email': data.get('uni_email'),
+                'uni_address': data.get('uni_address'),
+                'diplom_number': data.get('diplom_number'),
+                'gpa': data.get('gpa') if data.get('gpa') else 0,
+                'grad_date': to_date(data.get('grad_date')),
+                'prev_major': data.get('prev_major'),
+                
+                # FAMILY INFO - FATHER
+                'father_name': data.get('father_name'),
+                'father_passport': data.get('father_passport', ''),
+                'father_dob': to_date(data.get('father_dob')),
+                'father_phone': data.get('father_phone', ''),
+                'father_job': data.get('father_job', ''),
+                
+                # FAMILY INFO - MOTHER
+                'mother_name': data.get('mother_name'),
+                'mother_passport': data.get('mother_passport', ''),
+                'mother_dob': to_date(data.get('mother_dob')),
+                'mother_phone': data.get('mother_phone', ''),
+                'mother_job': data.get('mother_job', '')
+            }
+
+            photo = request.FILES.get('photo')
+            if photo:
+                fields['photo'] = photo
+
+            if applicant_id:
+                # Update existing
+                app_obj = get_object_or_404(Application, id=applicant_id)
+                for key, value in fields.items():
+                    setattr(app_obj, key, value)
+                app_obj.save()
+                request.session['open_doc_id'] = app_obj.id
+                messages.success(request, 'Application updated successfully!')
+            else:
+                # Create new
+                new_app = Application.objects.create(**fields)
+                request.session['open_doc_id'] = new_app.id
+                messages.success(request, 'Form submitted successfully!')
+            
+            return redirect('main:form')
+        except Exception as e:
+            messages.error(request, f'Error: {str(e)}')
+            return redirect('main:form')
+
+def delete_applicant(request):
+    if request.method == 'POST':
+        pk = request.POST.get('pk')
+        applicant = get_object_or_404(Application, pk=pk)
+        applicant.delete()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+def get_universities(request):
+    level = request.GET.get('level')
+    universities = University.objects.filter(education_level=level, is_active=True).values('id', 'name')
+    return JsonResponse(list(universities), safe=False)
+
+def get_university_details(request):
+    pk = request.GET.get('pk')
+    uni = get_object_or_404(University, pk=pk)
+    data = {
+        'phone': uni.phone,
+        'website': uni.website,
+        'email': uni.email,
+        'address': uni.address,
+    }
+    return JsonResponse(data)
+
+def get_applicants(request):
+    applicants = Application.objects.all().values('id', 'full_name')
+    return JsonResponse(list(applicants), safe=False)
+
+def get_applicant_details(request):
+    pk = request.GET.get('pk')
+    app = get_object_or_404(Application, pk=pk)
+    data = {
+        'oldin_otkaz': app.oldin_otkaz,
+        'country': app.country,
+        'bankshot': app.bankshot,
+        'full_name': app.full_name,
+        'dob': app.dob.isoformat() if app.dob else '',
+        'passport_number': app.passport_number,
+        'passport_issue': app.passport_issue.isoformat() if app.passport_issue else '',
+        'passport_expiry': app.passport_expiry.isoformat() if app.passport_expiry else '',
+        'gender': app.gender,
+        'phone': app.phone,
+        'email': app.email,
+        'address': app.address,
+        'zipcode': app.zipcode,
+        'test_type': app.test_type,
+        'score': str(app.score),
+        'test_date': app.test_date.isoformat() if app.test_date else '',
+        'expiry_date': app.expiry_date.isoformat() if app.expiry_date else '',
+        'education_level': app.education_level,
+        'uni_phone': app.uni_phone,
+        'uni_website': app.uni_website,
+        'uni_email': app.uni_email,
+        'uni_address': app.uni_address,
+        'diplom_number': app.diplom_number,
+        'gpa': str(app.gpa),
+        'grad_date': app.grad_date.isoformat() if app.grad_date else '',
+        'prev_major': app.prev_major,
+        'father_name': app.father_name,
+        'father_passport': app.father_passport,
+        'father_dob': app.father_dob.isoformat() if app.father_dob else '',
+        'father_phone': app.father_phone,
+        'father_job': app.father_job,
+        'mother_name': app.mother_name,
+        'mother_passport': app.mother_passport,
+        'mother_dob': app.mother_dob.isoformat() if app.mother_dob else '',
+        'mother_phone': app.mother_phone,
+        'mother_job': app.mother_job,
+        'photo_url': app.photo.url if app.photo else None,
+    }
+    return JsonResponse(data)
