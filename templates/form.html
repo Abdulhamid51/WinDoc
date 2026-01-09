@@ -299,12 +299,18 @@
                     <div class="full-width">
                         <label for="university-select" class="question-title">Select University <span
                                 class="required-asterisk">*</span></label>
-                        <div style="margin-top: 4px;">
-                            <div id="uni-select-container">
+                        <div style="margin-top: 4px; display: flex; gap: 8px; align-items: center;">
+                            <div id="uni-select-container" style="flex-grow: 1;">
                                 <select id="university-select" placeholder="Select university..." autocomplete="off">
                                     <option value="">First select education level...</option>
                                 </select>
                             </div>
+                            <button type="button" id="add-uni-btn" class="icon-btn" title="Add University">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                            </button>
+                            <button type="button" id="edit-uni-btn" class="icon-btn" title="Edit University" style="display: none;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+                            </button>
                         </div>
                     </div>
                     <div>
@@ -569,7 +575,13 @@
                 options: [],
                 create: false,
                 onChange: function (pk) {
-                    if (pk) loadUniversityDetails(pk);
+                    const editBtn = document.getElementById('edit-uni-btn');
+                    if (pk) {
+                        editBtn.style.display = 'flex';
+                        loadUniversityDetails(pk);
+                    } else {
+                        editBtn.style.display = 'none';
+                    }
                 }
             });
 
@@ -598,6 +610,120 @@
                     }
                 }
             });
+
+            // University Modal Logic
+            const uniModal = document.getElementById('uni-modal');
+            const uniModalForm = document.getElementById('uni-modal-form');
+            const addUniBtn = document.getElementById('add-uni-btn');
+            const editUniBtn = document.getElementById('edit-uni-btn');
+            const cancelUniBtn = document.getElementById('cancel-uni-modal');
+
+            if (addUniBtn) {
+                addUniBtn.onclick = () => {
+                    console.log('Add Uni clicked');
+                    const titleEl = document.getElementById('uni-modal-title');
+                    if (titleEl) titleEl.textContent = 'Add University';
+                    
+                    const idInput = document.getElementById('modal-uni-id');
+                    if (idInput) idInput.value = '';
+                    
+                    if (uniModalForm) uniModalForm.reset();
+                    
+                    const selectedLevel = document.querySelector('input[name="education_level"]:checked');
+                    const levelInput = document.getElementById('modal-uni-level');
+                    if (selectedLevel && levelInput) {
+                        levelInput.value = selectedLevel.value;
+                    }
+                    
+                    if (uniModal) uniModal.style.display = 'flex';
+                };
+            }
+
+            if (editUniBtn) {
+                editUniBtn.onclick = () => {
+                    console.log('Edit Uni clicked');
+                    const uniId = universitySelect.getValue();
+                    if (!uniId) return;
+
+                    const titleEl = document.getElementById('uni-modal-title');
+                    if (titleEl) titleEl.textContent = 'Edit University';
+                    
+                    const idInput = document.getElementById('modal-uni-id');
+                    if (idInput) idInput.value = uniId;
+
+                    fetch("{% url 'main:get_university_details' %}?pk=" + uniId)
+                        .then(response => response.json())
+                        .then(data => {
+                            const option = universitySelect.options[uniId];
+                            if (option) {
+                                document.getElementById('modal-uni-name').value = option.name || '';
+                            }
+                            
+                            const levelRadio = document.querySelector('input[name="education_level"]:checked');
+                            const levelInput = document.getElementById('modal-uni-level');
+                            if (levelRadio && levelInput) {
+                                levelInput.value = levelRadio.value;
+                            }
+                            
+                            document.getElementById('modal-uni-phone').value = data.phone || '';
+                            document.getElementById('modal-uni-website').value = data.website || '';
+                            document.getElementById('modal-uni-email').value = data.email || '';
+                            document.getElementById('modal-uni-address').value = data.address || '';
+                            
+                            if (uniModal) uniModal.style.display = 'flex';
+                        })
+                        .catch(err => {
+                            console.error('Error fetching university details:', err);
+                        });
+                };
+            }
+
+            if (cancelUniBtn) {
+                cancelUniBtn.onclick = () => {
+                    if (uniModal) uniModal.style.display = 'none';
+                };
+            }
+
+            window.addEventListener('click', (event) => {
+                if (event.target === uniModal) {
+                    uniModal.style.display = 'none';
+                }
+            });
+
+            if (uniModalForm) {
+                uniModalForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const formData = new FormData();
+                    formData.append('pk', document.getElementById('modal-uni-id').value);
+                    formData.append('name', document.getElementById('modal-uni-name').value);
+                    formData.append('education_level', document.getElementById('modal-uni-level').value);
+                    formData.append('phone', document.getElementById('modal-uni-phone').value);
+                    formData.append('website', document.getElementById('modal-uni-website').value);
+                    formData.append('email', document.getElementById('modal-uni-email').value);
+                    formData.append('address', document.getElementById('modal-uni-address').value);
+                    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                    fetch("{% url 'main:save_university' %}", {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            if (uniModal) uniModal.style.display = 'none';
+                            const level = document.getElementById('modal-uni-level').value;
+                            loadUniversities(level).then(() => {
+                                universitySelect.setValue(data.id);
+                            });
+                        } else {
+                            alert('Error saving university');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error saving university:', err);
+                    });
+                };
+            }
         });
 
         function loadApplicantDetails(pk) {
@@ -686,7 +812,7 @@
 
         function loadUniversities(level) {
             if (!universitySelect) {
-                return;
+                return Promise.resolve();
             }
             universitySelect.clear();
             universitySelect.clearOptions();
@@ -695,7 +821,7 @@
             universitySelect.settings.placeholder = "Loading universities...";
             universitySelect.control_input.placeholder = "Loading universities...";
 
-            fetch("{% url 'main:get_universities' %}?level=" + level)
+            return fetch("{% url 'main:get_universities' %}?level=" + level)
                 .then(response => {
                     if (!response.ok) throw new Error('Network response was not ok');
                     return response.json();
@@ -706,6 +832,7 @@
                     const newPlaceholder = data.length > 0 ? "Search and select university..." : "No universities found for this level";
                     universitySelect.settings.placeholder = newPlaceholder;
                     universitySelect.control_input.placeholder = newPlaceholder;
+                    return data;
                 })
                 .catch(error => {
                     universitySelect.settings.placeholder = "Error loading universities";
@@ -728,6 +855,7 @@
                 .catch(error => {
                 });
         }
+
     </script>
     <!-- Delete Confirmation Modal -->
     <div id="delete-modal" class="modal-overlay">
@@ -739,6 +867,50 @@
                 <button type="button" class="btn-secondary" id="cancel-delete">Cancel</button>
                 <button type="button" class="btn-danger" id="confirm-delete">Delete</button>
             </div>
+        </div>
+    </div>
+
+    <!-- University Modal -->
+    <div id="uni-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px;">
+            <h3 class="modal-title" id="uni-modal-title">Add University</h3>
+            <form id="uni-modal-form">
+                <input type="hidden" id="modal-uni-id">
+                <div style="margin-bottom: 16px;">
+                    <label class="question-title" style="font-size: 14px;">University Name <span class="required-asterisk">*</span></label>
+                    <input type="text" id="modal-uni-name" class="text-input" required>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label class="question-title" style="font-size: 14px;">Education Level <span class="required-asterisk">*</span></label>
+                    <select id="modal-uni-level" class="text-input" style="height: 40px;" required>
+                        <option value="bachelor">Bakalavr</option>
+                        <option value="master">Magistr</option>
+                        <option value="college">College</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                    <div>
+                        <label class="question-title" style="font-size: 14px;">Phone</label>
+                        <input type="text" id="modal-uni-phone" class="text-input">
+                    </div>
+                    <div>
+                        <label class="question-title" style="font-size: 14px;">Website</label>
+                        <input type="url" id="modal-uni-website" class="text-input">
+                    </div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <label class="question-title" style="font-size: 14px;">Email</label>
+                    <input type="email" id="modal-uni-email" class="text-input">
+                </div>
+                <div style="margin-bottom: 24px;">
+                    <label class="question-title" style="font-size: 14px;">Address</label>
+                    <input type="text" id="modal-uni-address" class="text-input">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancel-uni-modal">Cancel</button>
+                    <button type="submit" class="submit-btn">Save</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>
