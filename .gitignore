@@ -46,3 +46,4 @@ Thumbs.db
 .env.local
 
 *.sqlite3
+migrations/
