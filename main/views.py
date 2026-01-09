@@ -172,6 +172,32 @@ def get_university_details(request):
     }
     return JsonResponse(data)
 
+def save_university(request):
+    if request.method == 'POST':
+        pk = request.POST.get('pk')
+        name = request.POST.get('name')
+        education_level = request.POST.get('education_level')
+        phone = request.POST.get('phone', '')
+        website = request.POST.get('website', '')
+        email = request.POST.get('email', '')
+        address = request.POST.get('address', '')
+        
+        if pk:
+            uni = get_object_or_404(University, pk=pk)
+        else:
+            uni = University()
+            
+        uni.name = name
+        uni.education_level = education_level
+        uni.phone = phone
+        uni.website = website
+        uni.email = email
+        uni.address = address
+        uni.save()
+        
+        return JsonResponse({'status': 'success', 'id': uni.id, 'name': uni.name})
+    return JsonResponse({'status': 'error'}, status=400)
+
 def get_applicants(request):
     applicants = Application.objects.all().values('id', 'full_name')
     return JsonResponse(list(applicants), safe=False)
