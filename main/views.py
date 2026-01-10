@@ -56,8 +56,7 @@ class DetailView(View):
     
 class FormView(LoginRequiredMixin, View):
     def get(self, request):
-        open_doc_id = request.session.pop('open_doc_id', None)
-        return render(request, 'form.html', {'open_doc_id': open_doc_id})
+        return render(request, 'form.html')
 
     def post(self, request):
         # Extract data from request.POST
@@ -135,15 +134,15 @@ class FormView(LoginRequiredMixin, View):
                 for key, value in fields.items():
                     setattr(app_obj, key, value)
                 app_obj.save()
-                request.session['open_doc_id'] = app_obj.id
+                pk = app_obj.id
                 messages.success(request, 'Application updated successfully!')
             else:
                 # Create new
                 new_app = Application.objects.create(**fields)
-                request.session['open_doc_id'] = new_app.id
+                pk = new_app.id
                 messages.success(request, 'Form submitted successfully!')
             
-            return redirect('main:form')
+            return redirect('main:application_document', pk=pk)
         except Exception as e:
             messages.error(request, f'Error: {str(e)}')
             return redirect('main:form')

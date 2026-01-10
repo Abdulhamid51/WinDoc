@@ -34,7 +34,7 @@
 <body>
 
     <div class="form-container">
-        <form method="POST" action="{% url 'main:form' %}" enctype="multipart/form-data">
+        <form method="POST" action="{% url 'main:form' %}" enctype="multipart/form-data" target="_blank">
             {% csrf_token %}
             <input type="hidden" name="applicant_id" id="applicant-id-input">
 
@@ -491,10 +491,7 @@
         var currentApplicantId = null;
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Auto open document if just saved
-            {% if open_doc_id %}
-                window.open("{% url 'main:application_document' open_doc_id %}", "_blank");
-            {% endif %}
+
 
             const deleteBtn = document.getElementById('delete-applicant-btn');
             const modal = document.getElementById('delete-modal');
