@@ -61,6 +61,7 @@ class FormView(LoginRequiredMixin, View):
     def post(self, request):
         # Extract data from request.POST
         data = request.POST
+        print("DEBUG POST DATA:", data)
         applicant_id = data.get('applicant_id')
         
         # Helper to convert 'True'/'False' strings to boolean
@@ -144,6 +145,9 @@ class FormView(LoginRequiredMixin, View):
             
             return redirect('main:application_document', pk=pk)
         except Exception as e:
+            import traceback
+            print("ERROR IN FORM SUBMIT:")
+            print(traceback.format_exc())
             messages.error(request, f'Error: {str(e)}')
             return redirect('main:form')
 

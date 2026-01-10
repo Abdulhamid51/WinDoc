@@ -21,6 +21,45 @@ body {
     page-break-before: always;
 }
 
+.doc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #1a73e8;
+}
+
+.doc-header .logo img {
+    height: 35px;
+    width: auto;
+}
+
+.doc-header .title-text {
+    flex: 1;
+    text-align: right;
+}
+
+.doc-header .title-text h1 {
+    font-size: 22px;
+    color: #1a73e8;
+    margin: 0;
+    text-align: right;
+}
+
+.doc-header .title-text h1 span {
+    font-size: 16px;
+    color: #555;
+    font-weight: normal;
+}
+
+.doc-header .title-text h2 {
+    font-size: 15px;
+    margin: 5px 0 0 0;
+    color: #333;
+    text-align: right;
+}
+
 h1 {
     text-align: center;
     font-size: 24px;

@@ -62,10 +62,10 @@ class Application(models.Model):
         ('TOPIK', 'TOPIK'),
         ('TOEFL', 'TOEFL'),
     ]
-    test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, verbose_name="Test Type")
-    score = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Score")
-    test_date = models.DateField(verbose_name="Test Date")
-    expiry_date = models.DateField(verbose_name="Expiry Date")
+    test_type = models.CharField(max_length=10, choices=TEST_TYPE_CHOICES, verbose_name="Test Type", blank=True, null=True)
+    score = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Score", default=0)
+    test_date = models.DateField(verbose_name="Test Date", blank=True, null=True)
+    expiry_date = models.DateField(verbose_name="Expiry Date", blank=True, null=True)
     
     # UNIVERSITY INFO
     EDUCATION_LEVEL_CHOICES = [
@@ -74,14 +74,14 @@ class Application(models.Model):
         ('college', 'College'),
     ]
     education_level = models.CharField(max_length=20, choices=EDUCATION_LEVEL_CHOICES, verbose_name="Education Level")
-    uni_phone = models.CharField(max_length=20, verbose_name="University Phone")
+    uni_phone = models.CharField(max_length=20, verbose_name="University Phone", blank=True)
     uni_website = models.URLField(verbose_name="University Website", blank=True)
-    uni_email = models.EmailField(verbose_name="University Email")
-    uni_address = models.TextField(verbose_name="University Address")
-    diplom_number = models.CharField(max_length=100, verbose_name="Diploma Number")
-    gpa = models.DecimalField(max_digits=4, decimal_places=2, verbose_name="GPA")
-    grad_date = models.DateField(verbose_name="Graduation Date")
-    prev_major = models.CharField(max_length=255, verbose_name="Previous Major")
+    uni_email = models.EmailField(verbose_name="University Email", blank=True)
+    uni_address = models.TextField(verbose_name="University Address", blank=True)
+    diplom_number = models.CharField(max_length=100, verbose_name="Diploma Number", blank=True)
+    gpa = models.DecimalField(max_digits=4, decimal_places=2, verbose_name="GPA", default=0)
+    grad_date = models.DateField(verbose_name="Graduation Date", blank=True, null=True)
+    prev_major = models.CharField(max_length=255, verbose_name="Previous Major", blank=True)
     
     # FAMILY INFO - FATHER
     father_name = models.CharField(max_length=255, verbose_name="Father Name")
@@ -91,7 +91,7 @@ class Application(models.Model):
     father_job = models.CharField(max_length=255, verbose_name="Father Occupation", blank=True)
     
     # FAMILY INFO - MOTHER
-    mother_name = models.CharField(max_length=255, verbose_name="Mother Name")
+    mother_name = models.CharField(max_length=255, verbose_name="Mother Name", blank=True)
     mother_passport = models.CharField(max_length=50, verbose_name="Mother Passport", blank=True)
     mother_dob = models.DateField(verbose_name="Mother DOB", null=True, blank=True)
     mother_phone = models.CharField(max_length=20, verbose_name="Mother Phone", blank=True)
