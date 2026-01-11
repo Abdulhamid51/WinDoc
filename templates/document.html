@@ -5,8 +5,12 @@
     <meta charset="UTF-8">
     <title>Application Form - {{ app.full_name }}</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
+
+<!-- ================= PDF CONTENT WRAPPER ================= -->
+<div id="pdf-content">
 
 <!-- ================= PAGE 1 ================= -->
 <div class="page">
@@ -154,6 +158,7 @@
 <!-- Navigation Tools -->
 <div class="no-print" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
     <a href="{% url 'main:form' %}" style="display: inline-block; padding: 10px 20px; background: #666; color: white; text-decoration: none; border-radius: 4px; margin-right: 10px; font-weight: 500;">Back to Form</a>
+    <button onclick="downloadPDF()" style="padding: 10px 20px; background: #34a853; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin-right: 10px;">Download PDF</button>
     <button onclick="window.print()" style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">Print Document</button>
 </div>
 
@@ -212,10 +217,52 @@
             <span class="line"></span>
         </div>
 
-        <div class="date">{{ app.created_at|date:"Y-m-d" }}</div>
     </div>
 
 </div>
+
+</div> <!-- end #pdf-content -->
+
+<script>
+    function downloadPDF() {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #pdf-content {
+                width: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            #pdf-content .page {
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: 210mm !important;
+                min-height: 295mm !important; /* Slightly less than A4 to prevent bleed */
+                padding: 15mm !important;
+                box-sizing: border-box !important;
+            }
+        `;
+        document.head.appendChild(style);
+
+        const element = document.getElementById('pdf-content');
+        const opt = {
+            margin:       0,
+            filename:     'Application_{{ app.full_name|slugify }}.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { 
+                scale: 2,
+                useCORS: true,
+                letterRendering: true,
+                width: 794, // 210mm at 96dpi
+            },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak:    { mode: ['css', 'legacy'] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.head.removeChild(style);
+        });
+    }
+</script>
 
 </body>
 </html>

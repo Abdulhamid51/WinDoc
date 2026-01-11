@@ -61,7 +61,6 @@ class FormView(LoginRequiredMixin, View):
     def post(self, request):
         # Extract data from request.POST
         data = request.POST
-        print("DEBUG POST DATA:", data)
         applicant_id = data.get('applicant_id')
         
         # Helper to convert 'True'/'False' strings to boolean
