@@ -9,6 +9,13 @@
 </head>
 <body>
 
+<!-- Navigation Tools -->
+<div class="no-print" data-html2canvas-ignore="true" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <a href="{% url 'main:form' %}" style="display: inline-block; padding: 10px 20px; background: #666; color: white; text-decoration: none; border-radius: 4px; margin-right: 10px; font-weight: 500;">Back to Form</a>
+    <button onclick="downloadPDF()" style="padding: 10px 20px; background: #34a853; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin-right: 10px;">Download PDF</button>
+    <button onclick="window.print()" style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">Print Document</button>
+</div>
+
 <!-- ================= PDF CONTENT WRAPPER ================= -->
 <div id="pdf-content">
 
@@ -155,12 +162,7 @@
 
 </div>
 
-<!-- Navigation Tools -->
-<div class="no-print" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-    <a href="{% url 'main:form' %}" style="display: inline-block; padding: 10px 20px; background: #666; color: white; text-decoration: none; border-radius: 4px; margin-right: 10px; font-weight: 500;">Back to Form</a>
-    <button onclick="downloadPDF()" style="padding: 10px 20px; background: #34a853; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2); margin-right: 10px;">Download PDF</button>
-    <button onclick="window.print()" style="padding: 10px 20px; background: #1a73e8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">Print Document</button>
-</div>
+
 
 <!-- ================= PAGE 2 ================= -->
 <div class="page page-break">
