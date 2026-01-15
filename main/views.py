@@ -89,6 +89,8 @@ class FormView(LoginRequiredMixin, View):
                 # CONTACT
                 'phone': data.get('phone'),
                 'email': data.get('email'),
+                'cell_phone': data.get('cell_phone', ''),
+                'telegram': data.get('telegram', ''),
                 'address': data.get('address'),
                 'zipcode': data.get('zipcode'),
                 
@@ -121,7 +123,25 @@ class FormView(LoginRequiredMixin, View):
                 'mother_passport': data.get('mother_passport', ''),
                 'mother_dob': to_date(data.get('mother_dob')),
                 'mother_phone': data.get('mother_phone', ''),
-                'mother_job': data.get('mother_job', '')
+                'mother_job': data.get('mother_job', ''),
+
+                # FINANCIAL SPONSOR INFO
+                'sponsor_name': data.get('sponsor_name', ''),
+                'sponsor_relation': data.get('sponsor_relation', ''),
+                'sponsor_occupation': data.get('sponsor_occupation', ''),
+                'sponsor_address': data.get('sponsor_address', ''),
+                'sponsor_phone': data.get('sponsor_phone', ''),
+                'sponsor_company': data.get('sponsor_company', ''),
+                'sponsor_position': data.get('sponsor_position', ''),
+                'sponsor_company_address': data.get('sponsor_company_address', ''),
+                'sponsor_contact_no': data.get('sponsor_contact_no', ''),
+
+                # EMERGENCY CONTACT INFO
+                'emergency_name': data.get('emergency_name', ''),
+                'emergency_relation': data.get('emergency_relation', ''),
+                'emergency_occupation': data.get('emergency_occupation', ''),
+                'emergency_address': data.get('emergency_address', ''),
+                'emergency_phone': data.get('emergency_phone', '')
             }
 
             photo = request.FILES.get('photo')
@@ -219,6 +239,8 @@ def get_applicant_details(request):
         'gender': app.gender,
         'phone': app.phone,
         'email': app.email,
+        'cell_phone': app.cell_phone,
+        'telegram': app.telegram,
         'address': app.address,
         'zipcode': app.zipcode,
         'test_type': app.test_type,
@@ -244,6 +266,23 @@ def get_applicant_details(request):
         'mother_dob': app.mother_dob.isoformat() if app.mother_dob else '',
         'mother_phone': app.mother_phone,
         'mother_job': app.mother_job,
+
+        'sponsor_name': app.sponsor_name,
+        'sponsor_relation': app.sponsor_relation,
+        'sponsor_occupation': app.sponsor_occupation,
+        'sponsor_address': app.sponsor_address,
+        'sponsor_phone': app.sponsor_phone,
+        'sponsor_company': app.sponsor_company,
+        'sponsor_position': app.sponsor_position,
+        'sponsor_company_address': app.sponsor_company_address,
+        'sponsor_contact_no': app.sponsor_contact_no,
+
+        'emergency_name': app.emergency_name,
+        'emergency_relation': app.emergency_relation,
+        'emergency_occupation': app.emergency_occupation,
+        'emergency_address': app.emergency_address,
+        'emergency_phone': app.emergency_phone,
+
         'photo_url': app.photo.url if app.photo else None,
     }
     return JsonResponse(data)

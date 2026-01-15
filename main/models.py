@@ -53,6 +53,8 @@ class Application(models.Model):
     # CONTACT
     phone = models.CharField(max_length=20, verbose_name="Phone")
     email = models.EmailField(verbose_name="Email")
+    cell_phone = models.CharField(max_length=20, verbose_name="Cell Phone", blank=True)
+    telegram = models.CharField(max_length=100, verbose_name="Telegram Username", blank=True)
     address = models.TextField(verbose_name="Address")
     zipcode = models.CharField(max_length=20, verbose_name="Zipcode")
     
@@ -97,6 +99,24 @@ class Application(models.Model):
     mother_phone = models.CharField(max_length=20, verbose_name="Mother Phone", blank=True)
     mother_job = models.CharField(max_length=255, verbose_name="Mother Occupation", blank=True)
     
+    # FINANCIAL SPONSOR INFO
+    sponsor_name = models.CharField(max_length=255, verbose_name="Sponsor Name", blank=True)
+    sponsor_relation = models.CharField(max_length=100, verbose_name="Sponsor Relationship", blank=True)
+    sponsor_occupation = models.CharField(max_length=255, verbose_name="Sponsor Occupation", blank=True)
+    sponsor_address = models.TextField(verbose_name="Sponsor Address", blank=True)
+    sponsor_phone = models.CharField(max_length=20, verbose_name="Sponsor Phone", blank=True)
+    sponsor_company = models.CharField(max_length=255, verbose_name="Sponsor Place of Employment", blank=True)
+    sponsor_position = models.CharField(max_length=255, verbose_name="Sponsor Department/Position", blank=True)
+    sponsor_company_address = models.TextField(verbose_name="Sponsor Employment Address", blank=True)
+    sponsor_contact_no = models.CharField(max_length=20, verbose_name="Sponsor Contact No", blank=True)
+
+    # EMERGENCY CONTACT INFO
+    emergency_name = models.CharField(max_length=255, verbose_name="Emergency Name", blank=True)
+    emergency_relation = models.CharField(max_length=100, verbose_name="Emergency Relationship", blank=True)
+    emergency_occupation = models.CharField(max_length=255, verbose_name="Emergency Occupation", blank=True)
+    emergency_address = models.TextField(verbose_name="Emergency Address", blank=True)
+    emergency_phone = models.CharField(max_length=20, verbose_name="Emergency Phone", blank=True)
+
     photo = models.ImageField(upload_to='applicant_photos/', null=True, blank=True, verbose_name="Photo")
     
     created_at = models.DateTimeField(auto_now_add=True)

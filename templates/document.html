@@ -98,6 +98,12 @@
             <th>Email</th>
             <td>{{ app.email }}</td>
         </tr>
+        <tr>
+            <th>Cell Phone</th>
+            <td>{{ app.cell_phone|default:"-" }}</td>
+            <th>Telegram</th>
+            <td>{{ app.telegram|default:"-" }}</td>
+        </tr>
     </table>
 
     <h3>Educational Background</h3>
@@ -209,6 +215,54 @@
     </table>
     {% endif %}
 
+    <h3>Financial Sponsor's Information</h3>
+    <table>
+        <tr>
+            <th style="width: 15%;">Name</th>
+            <td>{{ app.sponsor_name|default:"-" }}</td>
+            <th style="width: 15%;">Relationship</th>
+            <td>{{ app.sponsor_relation|default:"-" }}</td>
+            <th style="width: 15%;">Occupation</th>
+            <td>{{ app.sponsor_occupation|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td colspan="3">{{ app.sponsor_address|default:"-" }}</td>
+            <th>Telephone No.</th>
+            <td>{{ app.sponsor_phone|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Place of Employment</th>
+            <td colspan="3">{{ app.sponsor_company|default:"-" }}</td>
+            <th>Department / Position</th>
+            <td>{{ app.sponsor_position|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Employment Address</th>
+            <td colspan="3">{{ app.sponsor_company_address|default:"-" }}</td>
+            <th>Contact No.</th>
+            <td>{{ app.sponsor_contact_no|default:"-" }}</td>
+        </tr>
+    </table>
+
+    <h3>Emergency contact Information</h3>
+    <table>
+        <tr>
+            <th style="width: 15%;">Name</th>
+            <td>{{ app.emergency_name|default:"-" }}</td>
+            <th style="width: 15%;">Relationship</th>
+            <td>{{ app.emergency_relation|default:"-" }}</td>
+            <th style="width: 15%;">Occupation</th>
+            <td>{{ app.emergency_occupation|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td colspan="3">{{ app.emergency_address|default:"-" }}</td>
+            <th>Telephone No.</th>
+            <td>{{ app.emergency_phone|default:"-" }}</td>
+        </tr>
+    </table>
+
     <div class="sign">
         <p>
             I agree to provide my personal information for admission.
@@ -241,6 +295,29 @@
                 min-height: 295mm !important; /* Slightly less than A4 to prevent bleed */
                 padding: 15mm !important;
                 box-sizing: border-box !important;
+                position: relative !important;
+                overflow: hidden !important;
+                background: #ffffff !important;
+            }
+            #pdf-content .page::after {
+                content: "" !important;
+                position: absolute !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background-image: url('{% static "logo/logo.png" %}') !important;
+                background-repeat: no-repeat !important;
+                background-position: center !important;
+                background-size: 650px !important;
+                transform: rotate(-45deg) !important;
+                opacity: 0.08 !important;
+                pointer-events: none !important;
+                z-index: 0 !important;
+            }
+            #pdf-content .page > * {
+                position: relative !important;
+                z-index: 1 !important;
             }
         `;
         document.head.appendChild(style);

@@ -208,6 +208,18 @@
                                 required>
                         </div>
                     </div>
+                    <div>
+                        <label for="cell_phone" class="question-title">Cell Phone</label>
+                        <div class="input-group">
+                            <input type="text" id="cell_phone" name="cell_phone" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="telegram" class="question-title">Telegram Username</label>
+                        <div class="input-group">
+                            <input type="text" id="telegram" name="telegram" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
                     <div class="full-width">
                         <label for="address" class="question-title">Address <span
                                 class="required-asterisk">*</span></label>
@@ -418,7 +430,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- FAMILY INFO - MOTHER -->
             <div class="question-card">
                 <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Mother Info</h2>
@@ -456,6 +467,104 @@
                         <div class="input-group">
                             <input type="text" id="mother_job" name="mother_job" class="text-input"
                                 placeholder="Your answer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FINANCIAL SPONSOR INFO -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Financial Sponsor's Information</h2>
+                <div class="question-grid">
+                    <div>
+                        <label for="sponsor_name" class="question-title">Sponsor Name</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_name" name="sponsor_name" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sponsor_relation" class="question-title">Relationship</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_relation" name="sponsor_relation" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sponsor_occupation" class="question-title">Occupation</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_occupation" name="sponsor_occupation" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="sponsor_address" class="question-title">Address</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_address" name="sponsor_address" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sponsor_phone" class="question-title">Telephone No.</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_phone" name="sponsor_phone" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="sponsor_company" class="question-title">Place of Employment</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_company" name="sponsor_company" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sponsor_position" class="question-title">Department / Position</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_position" name="sponsor_position" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="sponsor_company_address" class="question-title">Employment Address</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_company_address" name="sponsor_company_address" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="sponsor_contact_no" class="question-title">Contact No.</label>
+                        <div class="input-group">
+                            <input type="text" id="sponsor_contact_no" name="sponsor_contact_no" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMERGENCY CONTACT INFO -->
+            <div class="question-card">
+                <h2 style="font-size: 20px; font-weight: 400; margin: 0 0 16px;">Emergency Contact Information</h2>
+                <div class="question-grid">
+                    <div>
+                        <label for="emergency_name" class="question-title">Name</label>
+                        <div class="input-group">
+                            <input type="text" id="emergency_name" name="emergency_name" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="emergency_relation" class="question-title">Relationship</label>
+                        <div class="input-group">
+                            <input type="text" id="emergency_relation" name="emergency_relation" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="emergency_occupation" class="question-title">Occupation</label>
+                        <div class="input-group">
+                            <input type="text" id="emergency_occupation" name="emergency_occupation" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="emergency_address" class="question-title">Address</label>
+                        <div class="input-group">
+                            <input type="text" id="emergency_address" name="emergency_address" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="emergency_phone" class="question-title">Telephone No.</label>
+                        <div class="input-group">
+                            <input type="text" id="emergency_phone" name="emergency_phone" class="text-input" placeholder="Your answer">
                         </div>
                     </div>
                 </div>
@@ -746,6 +855,8 @@
                     // CONTACT
                     document.getElementById('phone').value = data.phone || '';
                     document.getElementById('email').value = data.email || '';
+                    document.getElementById('cell_phone').value = data.cell_phone || '';
+                    document.getElementById('telegram').value = data.telegram || '';
                     document.getElementById('address').value = data.address || '';
                     document.getElementById('zipcode').value = data.zipcode || '';
 
@@ -788,6 +899,24 @@
                     document.getElementById('mother_dob').value = data.mother_dob || '';
                     document.getElementById('mother_phone').value = data.mother_phone || '';
                     document.getElementById('mother_job').value = data.mother_job || '';
+                    
+                    // SPONSOR
+                    document.getElementById('sponsor_name').value = data.sponsor_name || '';
+                    document.getElementById('sponsor_relation').value = data.sponsor_relation || '';
+                    document.getElementById('sponsor_occupation').value = data.sponsor_occupation || '';
+                    document.getElementById('sponsor_address').value = data.sponsor_address || '';
+                    document.getElementById('sponsor_phone').value = data.sponsor_phone || '';
+                    document.getElementById('sponsor_company').value = data.sponsor_company || '';
+                    document.getElementById('sponsor_position').value = data.sponsor_position || '';
+                    document.getElementById('sponsor_company_address').value = data.sponsor_company_address || '';
+                    document.getElementById('sponsor_contact_no').value = data.sponsor_contact_no || '';
+
+                    // EMERGENCY
+                    document.getElementById('emergency_name').value = data.emergency_name || '';
+                    document.getElementById('emergency_relation').value = data.emergency_relation || '';
+                    document.getElementById('emergency_occupation').value = data.emergency_occupation || '';
+                    document.getElementById('emergency_address').value = data.emergency_address || '';
+                    document.getElementById('emergency_phone').value = data.emergency_phone || '';
 
                     // PHOTO PREVIEW
                     const preview = document.getElementById('photo-preview');
