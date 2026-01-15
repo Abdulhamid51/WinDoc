@@ -1,0 +1,400 @@
+{% load static %}
+<div id="pdf-export-content" style="display: none;">
+    <style>
+        .pdf-wrapper {
+            font-family: 'Inter', Arial, sans-serif;
+            color: #333;
+            background: #fff;
+            width: 210mm;
+            margin: 0;
+            padding: 0;
+        }
+        .pdf-page {
+            width: 210mm;
+            height: 296mm; /* Precise A4 height to prevent spillover */
+            padding: 20mm;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+            page-break-after: always;
+        }
+        .pdf-page:last-child {
+            page-break-after: auto;
+        }
+        .pdf-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background-image: url('{% static "logo/logo.png" %}');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            transform: translate(-50%, -50%);
+            opacity: 0.08;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .pdf-content-inner {
+            position: relative;
+            z-index: 1;
+        }
+        .pdf-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a73e8;
+        }
+        .pdf-header img {
+            height: 35px;
+            width: auto;
+        }
+        .pdf-header-text {
+            text-align: right;
+            flex: 1;
+        }
+        .pdf-header-text h1 {
+            font-size: 18px;
+            color: #1a73e8;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .pdf-header-text h1 span {
+            font-size: 14px;
+            color: #555;
+            font-weight: normal;
+        }
+        .pdf-header-text h2 {
+            font-size: 13px;
+            margin: 5px 0 0 0;
+            color: #333;
+        }
+        .pdf-section-title {
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            table-layout: fixed;
+        }
+        .pdf-table th, .pdf-table td {
+            border: 1px solid #000;
+            padding: 5px;
+            vertical-align: middle;
+            word-wrap: break-word;
+        }
+        .pdf-table th {
+            background: #e6f2fa;
+            width: 25%;
+            text-align: left;
+            font-weight: 600;
+        }
+        .pdf-photo-box {
+            width: 30mm;
+            height: 40mm;
+            border: 1px solid #000;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 9px;
+            background: #fff;
+        }
+        .pdf-photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pdf-sign-area {
+            margin-top: 40px;
+            font-size: 12px;
+        }
+        .pdf-signature-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            align-items: flex-end;
+        }
+        .pdf-signature-line {
+            width: 200px;
+            border-bottom: 1px solid #000;
+        }
+        .pdf-checkbox {
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            display: inline-block;
+            margin-right: 4px;
+            vertical-align: middle;
+            position: relative;
+        }
+        .pdf-checkbox.checked::after {
+            content: "✓";
+            position: absolute;
+            top: -2px;
+            left: 1px;
+            font-size: 10px;
+        }
+    </style>
+
+    <div class="pdf-wrapper">
+        <!-- PAGE 1 -->
+        <div class="pdf-page">
+            <div class="pdf-watermark"></div>
+            <div class="pdf-content-inner">
+                <div class="pdf-header">
+                    <img src="{% static 'logo/logo.png' %}" alt="Logo">
+                    <div class="pdf-header-text">
+                        <h1>
+                            Academic Year 2026 Spring Semester<br>
+                            <span>Graduate School Admission Application for International Students</span>
+                        </h1>
+                        <h2>(Application Form for 2026-Spring Semester)</h2>
+                    </div>
+                </div>
+
+                <table class="pdf-table">
+                    <tr>
+                        <th>Application No.</th>
+                        <td colspan="3">APP-{{ app.id|stringformat:"05d" }}</td>
+                        <td rowspan="4" style="width: 35mm; text-align: center; background: #e6f2fa;">
+                            <div class="pdf-photo-box">
+                                {% if app.photo %}
+                                    <img src="{{ app.photo.url }}">
+                                {% else %}
+                                    PHOTO<br>(3×4 cm)
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Department</th>
+                        <td>{{ app.prev_major|default:"-" }}</td>
+                        <th>Major</th>
+                        <td>{{ app.prev_major|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Course</th>
+                        <td colspan="3">
+                            <span class="pdf-checkbox {% if app.education_level == 'bachelor' %}checked{% endif %}"></span> Bachelor &nbsp;
+                            <span class="pdf-checkbox {% if app.education_level == 'master' %}checked{% endif %}"></span> Master &nbsp;
+                            <span class="pdf-checkbox {% if app.education_level == 'college' %}checked{% endif %}"></span> College
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="pdf-section-title">Personal Information</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Name</th>
+                        <td colspan="3"><strong>{{ app.full_name|upper }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td>{{ app.dob|date:"Y-m-d" }}</td>
+                        <th>Sex</th>
+                        <td>
+                            <span class="pdf-checkbox {% if app.gender == 'M' %}checked{% endif %}"></span> Male &nbsp;
+                            <span class="pdf-checkbox {% if app.gender == 'F' %}checked{% endif %}"></span> Female
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Nationality</th>
+                        <td>{{ app.country }}</td>
+                        <th>Passport No</th>
+                        <td>{{ app.passport_number }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td colspan="3">({{ app.zipcode }}) {{ app.address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Mobile</th>
+                        <td>{{ app.phone }}</td>
+                        <th>Email</th>
+                        <td>{{ app.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cell Phone</th>
+                        <td>{{ app.cell_phone|default:"-" }}</td>
+                        <th>Telegram</th>
+                        <td>{{ app.telegram|default:"-" }}</td>
+                    </tr>
+                </table>
+
+                <div class="pdf-section-title">Educational Background</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Previous Major</th>
+                        <td>{{ app.prev_major }}</td>
+                        <th>Degree Obtained</th>
+                        <td>{{ app.get_education_level_display }}’s</td>
+                    </tr>
+                    <tr>
+                        <th>Graduation Date</th>
+                        <td>{{ app.grad_date|date:"Y-m-d" }}</td>
+                        <th>GPA / Score</th>
+                        <td>{{ app.gpa }} / 4.5</td>
+                    </tr>
+                    {% if app.diplom_number %}
+                    <tr>
+                        <th>Diploma Number</th>
+                        <td colspan="3">{{ app.diplom_number }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+
+                {% if app.test_type %}
+                <div class="pdf-section-title">Language Proficiency</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Test Type</th>
+                        <td>{{ app.test_type }}</td>
+                        <th>Score Obtained</th>
+                        <td>{{ app.score }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Test</th>
+                        <td>{{ app.test_date|date:"Y-m-d" }}</td>
+                        <th>Valid Until</th>
+                        <td>{{ app.expiry_date|date:"Y-m-d" }}</td>
+                    </tr>
+                </table>
+                {% endif %}
+
+                {% if app.country or app.bankshot %}
+                <div class="pdf-section-title">Visa & Financial Information</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Previous Visa Refusal</th>
+                        <td>{{ app.oldin_otkaz|yesno:"Yes,No" }}</td>
+                        <th>Destination Country</th>
+                        <td>{{ app.country|default:"-" }}</td>
+                    </tr>
+                    {% if app.bankshot %}
+                    <tr>
+                        <th>Bankshot / Funding</th>
+                        <td colspan="3">{{ app.bankshot }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- PAGE 2 -->
+        <div class="pdf-page">
+            <div class="pdf-watermark"></div>
+            <div class="pdf-content-inner">
+                {% if app.father_name or app.mother_name %}
+                <div class="pdf-section-title">Family Information</div>
+                <table class="pdf-table">
+                    {% if app.father_name %}
+                    <tr>
+                        <th rowspan="3" style="width: 15%; text-align: center;">Father</th>
+                        <th>Name</th>
+                        <td colspan="2"><strong>{{ app.father_name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Passport / DOB</th>
+                        <td>{{ app.father_passport|default:"-" }} / {{ app.father_dob|date:"Y-m-d"|default:"-" }}</td>
+                        <th>Phone</th>
+                        <td>{{ app.father_phone|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Occupation</th>
+                        <td colspan="3">{{ app.father_job|default:"-" }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if app.mother_name %}
+                    <tr>
+                        <th rowspan="3" style="width: 15%; text-align: center;">Mother</th>
+                        <th>Name</th>
+                        <td colspan="2"><strong>{{ app.mother_name }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Passport / DOB</th>
+                        <td>{{ app.mother_passport|default:"-" }} / {{ app.mother_dob|date:"Y-m-d"|default:"-" }}</td>
+                        <th>Phone</th>
+                        <td>{{ app.mother_phone|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Occupation</th>
+                        <td colspan="3">{{ app.mother_job|default:"-" }}</td>
+                    </tr>
+                    {% endif %}
+                </table>
+                {% endif %}
+
+                <div class="pdf-section-title">Financial Sponsor's Information</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ app.sponsor_name|default:"-" }}</td>
+                        <th>Relationship</th>
+                        <td>{{ app.sponsor_relation|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Occupation</th>
+                        <td>{{ app.sponsor_occupation|default:"-" }}</td>
+                        <th>Telephone No.</th>
+                        <td>{{ app.sponsor_phone|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td colspan="3">{{ app.sponsor_address|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Employment</th>
+                        <td colspan="3">{{ app.sponsor_company|default:"-" }} ({{ app.sponsor_position|default:"-" }})</td>
+                    </tr>
+                    <tr>
+                        <th>Emp. Address</th>
+                        <td colspan="3">{{ app.sponsor_company_address|default:"-" }}</td>
+                    </tr>
+                </table>
+
+                <div class="pdf-section-title">Emergency Contact Information</div>
+                <table class="pdf-table">
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ app.emergency_name|default:"-" }}</td>
+                        <th>Relationship</th>
+                        <td>{{ app.emergency_relation|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Occupation</th>
+                        <td>{{ app.emergency_occupation|default:"-" }}</td>
+                        <th>Telephone No.</th>
+                        <td>{{ app.emergency_phone|default:"-" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td colspan="3">{{ app.emergency_address|default:"-" }}</td>
+                    </tr>
+                </table>
+
+                <div class="pdf-sign-area">
+                    <p>I agree to provide my personal information for admission.</p>
+                    <div class="pdf-signature-row">
+                        <span>Applicant’s signature:</span>
+                        <div class="pdf-signature-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

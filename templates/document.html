@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Application Form - {{ app.full_name }}</title>
     <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
@@ -21,6 +22,7 @@
 
 <!-- ================= PAGE 1 ================= -->
 <div class="page">
+    <div class="watermark-bg"></div>
 
     <div class="doc-header">
         <div class="logo">
@@ -172,6 +174,7 @@
 
 <!-- ================= PAGE 2 ================= -->
 <div class="page page-break">
+    <div class="watermark-bg"></div>
 
 
     {% if app.father_name or app.mother_name %}
@@ -279,50 +282,14 @@
 
 </div> <!-- end #pdf-content -->
 
+{% include 'pdf_export.html' %}
+
 <script>
     function downloadPDF() {
-        const style = document.createElement('style');
-        style.innerHTML = `
-            #pdf-content {
-                width: 210mm !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            #pdf-content .page {
-                margin: 0 !important;
-                box-shadow: none !important;
-                width: 210mm !important;
-                min-height: 295mm !important; /* Slightly less than A4 to prevent bleed */
-                padding: 15mm !important;
-                box-sizing: border-box !important;
-                position: relative !important;
-                overflow: hidden !important;
-                background: #ffffff !important;
-            }
-            #pdf-content .page::after {
-                content: "" !important;
-                position: absolute !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                background-image: url('{% static "logo/logo.png" %}') !important;
-                background-repeat: no-repeat !important;
-                background-position: center !important;
-                background-size: 650px !important;
-                transform: rotate(-45deg) !important;
-                opacity: 0.08 !important;
-                pointer-events: none !important;
-                z-index: 0 !important;
-            }
-            #pdf-content .page > * {
-                position: relative !important;
-                z-index: 1 !important;
-            }
-        `;
-        document.head.appendChild(style);
+        // Show the export content briefly for html2pdf to capture it
+        const element = document.getElementById('pdf-export-content');
+        element.style.display = 'block';
 
-        const element = document.getElementById('pdf-content');
         const opt = {
             margin:       0,
             filename:     'Application_{{ app.full_name|slugify }}.pdf',
@@ -330,15 +297,16 @@
             html2canvas:  { 
                 scale: 2,
                 useCORS: true,
+                logging: false,
                 letterRendering: true,
-                width: 794, // 210mm at 96dpi
+                width: 793, // A4 width at 96dpi
             },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['css', 'legacy'] }
+            pagebreak:    { mode: 'css' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
-            document.head.removeChild(style);
+            element.style.display = 'none';
         });
     }
 </script>
