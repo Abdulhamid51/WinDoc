@@ -227,7 +227,7 @@
                         <td>{{ app.email }}</td>
                     </tr>
                     <tr>
-                        <th>Cell Phone</th>
+                        <th>Additional Phone Number</th>
                         <td>{{ app.cell_phone|default:"-" }}</td>
                         <th>Telegram</th>
                         <td>{{ app.telegram|default:"-" }}</td>
@@ -237,23 +237,33 @@
                 <div class="pdf-section-title">Educational Background</div>
                 <table class="pdf-table">
                     <tr>
+                        <th>Name (School, College or University)</th>
+                        <td colspan="3">{{ app.uni_name|default:"-" }}</td>
+                    </tr>
+                    <tr>
                         <th>Previous Major</th>
                         <td>{{ app.prev_major }}</td>
                         <th>Degree Obtained</th>
                         <td>{{ app.get_education_level_display }}’s</td>
                     </tr>
                     <tr>
+                        <th>Entry Date</th>
+                        <td>{{ app.uni_entry_date|date:"Y-m-d"|default:"-" }}</td>
                         <th>Graduation Date</th>
                         <td>{{ app.grad_date|date:"Y-m-d" }}</td>
+                    </tr>
+                    <tr>
+                        <th>University Phone</th>
+                        <td>{{ app.uni_phone|default:"-" }}</td>
+                        <th>Website / Email</th>
+                        <td>{{ app.uni_website|default:app.uni_email|default:"-" }}</td>
+                    </tr>
+                    <tr>
                         <th>GPA / Score</th>
                         <td>{{ app.gpa }} / 4.5</td>
-                    </tr>
-                    {% if app.diplom_number %}
-                    <tr>
                         <th>Diploma Number</th>
-                        <td colspan="3">{{ app.diplom_number }}</td>
+                        <td>{{ app.diplom_number|default:"-" }}</td>
                     </tr>
-                    {% endif %}
                 </table>
 
                 {% if app.test_type %}
@@ -270,6 +280,10 @@
                         <td>{{ app.test_date|date:"Y-m-d" }}</td>
                         <th>Valid Until</th>
                         <td>{{ app.expiry_date|date:"Y-m-d" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Test Report Number</th>
+                        <td colspan="3">{{ app.test_report_number|default:"-" }}</td>
                     </tr>
                 </table>
                 {% endif %}
@@ -315,7 +329,9 @@
                     </tr>
                     <tr>
                         <th>Occupation</th>
-                        <td colspan="3">{{ app.father_job|default:"-" }}</td>
+                        <td>{{ app.father_job|default:"-" }}</td>
+                        <th>Position</th>
+                        <td>{{ app.father_position|default:"-" }}</td>
                     </tr>
                     {% endif %}
                     
@@ -333,7 +349,9 @@
                     </tr>
                     <tr>
                         <th>Occupation</th>
-                        <td colspan="3">{{ app.mother_job|default:"-" }}</td>
+                        <td>{{ app.mother_job|default:"-" }}</td>
+                        <th>Position</th>
+                        <td>{{ app.mother_position|default:"-" }}</td>
                     </tr>
                     {% endif %}
                 </table>

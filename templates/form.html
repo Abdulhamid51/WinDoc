@@ -209,7 +209,7 @@
                         </div>
                     </div>
                     <div>
-                        <label for="cell_phone" class="question-title">Cell Phone</label>
+                        <label for="cell_phone" class="question-title">Additional Phone Number</label>
                         <div class="input-group">
                             <input type="text" id="cell_phone" name="cell_phone" class="text-input" placeholder="Your answer">
                         </div>
@@ -281,6 +281,12 @@
                             <input type="date" id="expiry_date" name="expiry_date" class="text-input" required>
                         </div>
                     </div>
+                    <div>
+                        <label for="test_report_number" class="question-title">Test report number(Checking Number)</label>
+                        <div class="input-group">
+                            <input type="text" id="test_report_number" name="test_report_number" class="text-input" placeholder="Your answer">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -323,6 +329,18 @@
                             <button type="button" id="edit-uni-btn" class="icon-btn" title="Edit University" style="display: none;">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
                             </button>
+                        </div>
+                    </div>
+                    <div class="full-width">
+                        <label for="uni_name" class="question-title">Name (School, College or University) <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="text" id="uni_name" name="uni_name" class="text-input" placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uni_entry_date" class="question-title">Entry Date <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="uni_entry_date" name="uni_entry_date" class="text-input" required>
                         </div>
                     </div>
                     <div>
@@ -428,6 +446,13 @@
                                 placeholder="Your answer">
                         </div>
                     </div>
+                    <div>
+                        <label for="father_position" class="question-title">Father Position</label>
+                        <div class="input-group">
+                            <input type="text" id="father_position" name="father_position" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- FAMILY INFO - MOTHER -->
@@ -466,6 +491,13 @@
                         <label for="mother_job" class="question-title">Mother Occupation</label>
                         <div class="input-group">
                             <input type="text" id="mother_job" name="mother_job" class="text-input"
+                                placeholder="Your answer">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="mother_position" class="question-title">Mother Position</label>
+                        <div class="input-group">
+                            <input type="text" id="mother_position" name="mother_position" class="text-input"
                                 placeholder="Your answer">
                         </div>
                     </div>
@@ -867,6 +899,7 @@
                     document.getElementById('score').value = data.score || '';
                     document.getElementById('test_date').value = data.test_date || '';
                     document.getElementById('expiry_date').value = data.expiry_date || '';
+                    document.getElementById('test_report_number').value = data.test_report_number || '';
 
                     // UNIVERSITY INFO
                     if (data.education_level) {
@@ -877,6 +910,8 @@
                             // For simplicity, we fill the static fields directly
                         }
                     }
+                    document.getElementById('uni_name').value = data.uni_name || '';
+                    document.getElementById('uni_entry_date').value = data.uni_entry_date || '';
                     document.getElementById('uni_phone').value = data.uni_phone || '';
                     document.getElementById('uni_website').value = data.uni_website || '';
                     document.getElementById('uni_email').value = data.uni_email || '';
@@ -892,6 +927,7 @@
                     document.getElementById('father_dob').value = data.father_dob || '';
                     document.getElementById('father_phone').value = data.father_phone || '';
                     document.getElementById('father_job').value = data.father_job || '';
+                    document.getElementById('father_position').value = data.father_position || '';
 
                     // MOTHER
                     document.getElementById('mother_name').value = data.mother_name || '';
@@ -899,6 +935,7 @@
                     document.getElementById('mother_dob').value = data.mother_dob || '';
                     document.getElementById('mother_phone').value = data.mother_phone || '';
                     document.getElementById('mother_job').value = data.mother_job || '';
+                    document.getElementById('mother_position').value = data.mother_position || '';
                     
                     // SPONSOR
                     document.getElementById('sponsor_name').value = data.sponsor_name || '';
@@ -973,6 +1010,7 @@
                     return response.json();
                 })
                 .then(data => {
+                    document.getElementById('uni_name').value = data.name || '';
                     document.getElementById('uni_phone').value = data.phone || '';
                     document.getElementById('uni_website').value = data.website || '';
                     document.getElementById('uni_email').value = data.email || '';

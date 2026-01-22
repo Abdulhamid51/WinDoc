@@ -99,9 +99,12 @@ class FormView(LoginRequiredMixin, View):
                 'score': data.get('score') if data.get('score') else 0,
                 'test_date': to_date(data.get('test_date')),
                 'expiry_date': to_date(data.get('expiry_date')),
+                'test_report_number': data.get('test_report_number', ''),
                 
                 # UNIVERSITY INFO
                 'education_level': data.get('education_level'),
+                'uni_name': data.get('uni_name', ''),
+                'uni_entry_date': to_date(data.get('uni_entry_date')),
                 'uni_phone': data.get('uni_phone'),
                 'uni_website': data.get('uni_website', ''),
                 'uni_email': data.get('uni_email'),
@@ -117,6 +120,7 @@ class FormView(LoginRequiredMixin, View):
                 'father_dob': to_date(data.get('father_dob')),
                 'father_phone': data.get('father_phone', ''),
                 'father_job': data.get('father_job', ''),
+                'father_position': data.get('father_position', ''),
                 
                 # FAMILY INFO - MOTHER
                 'mother_name': data.get('mother_name'),
@@ -124,6 +128,7 @@ class FormView(LoginRequiredMixin, View):
                 'mother_dob': to_date(data.get('mother_dob')),
                 'mother_phone': data.get('mother_phone', ''),
                 'mother_job': data.get('mother_job', ''),
+                'mother_position': data.get('mother_position', ''),
 
                 # FINANCIAL SPONSOR INFO
                 'sponsor_name': data.get('sponsor_name', ''),
@@ -187,6 +192,7 @@ def get_university_details(request):
     pk = request.GET.get('pk')
     uni = get_object_or_404(University, pk=pk)
     data = {
+        'name': uni.name,
         'phone': uni.phone,
         'website': uni.website,
         'email': uni.email,
@@ -247,7 +253,10 @@ def get_applicant_details(request):
         'score': str(app.score),
         'test_date': app.test_date.isoformat() if app.test_date else '',
         'expiry_date': app.expiry_date.isoformat() if app.expiry_date else '',
+        'test_report_number': app.test_report_number,
         'education_level': app.education_level,
+        'uni_name': app.uni_name,
+        'uni_entry_date': app.uni_entry_date.isoformat() if app.uni_entry_date else '',
         'uni_phone': app.uni_phone,
         'uni_website': app.uni_website,
         'uni_email': app.uni_email,
@@ -261,11 +270,13 @@ def get_applicant_details(request):
         'father_dob': app.father_dob.isoformat() if app.father_dob else '',
         'father_phone': app.father_phone,
         'father_job': app.father_job,
+        'father_position': app.father_position,
         'mother_name': app.mother_name,
         'mother_passport': app.mother_passport,
         'mother_dob': app.mother_dob.isoformat() if app.mother_dob else '',
         'mother_phone': app.mother_phone,
         'mother_job': app.mother_job,
+        'mother_position': app.mother_position,
 
         'sponsor_name': app.sponsor_name,
         'sponsor_relation': app.sponsor_relation,

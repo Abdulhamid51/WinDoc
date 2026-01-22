@@ -53,7 +53,7 @@ class Application(models.Model):
     # CONTACT
     phone = models.CharField(max_length=20, verbose_name="Phone")
     email = models.EmailField(verbose_name="Email")
-    cell_phone = models.CharField(max_length=20, verbose_name="Cell Phone", blank=True)
+    cell_phone = models.CharField(max_length=20, verbose_name="Additional Phone Number", blank=True)
     telegram = models.CharField(max_length=100, verbose_name="Telegram Username", blank=True)
     address = models.TextField(verbose_name="Address")
     zipcode = models.CharField(max_length=20, verbose_name="Zipcode")
@@ -68,6 +68,7 @@ class Application(models.Model):
     score = models.DecimalField(max_digits=5, decimal_places=2, verbose_name="Score", default=0)
     test_date = models.DateField(verbose_name="Test Date", blank=True, null=True)
     expiry_date = models.DateField(verbose_name="Expiry Date", blank=True, null=True)
+    test_report_number = models.CharField(max_length=100, verbose_name="Test Report Number", blank=True)
     
     # UNIVERSITY INFO
     EDUCATION_LEVEL_CHOICES = [
@@ -76,6 +77,8 @@ class Application(models.Model):
         ('college', 'College'),
     ]
     education_level = models.CharField(max_length=20, choices=EDUCATION_LEVEL_CHOICES, verbose_name="Education Level")
+    uni_name = models.CharField(max_length=255, verbose_name="University Name", blank=True)
+    uni_entry_date = models.DateField(verbose_name="Entry Date", blank=True, null=True)
     uni_phone = models.CharField(max_length=20, verbose_name="University Phone", blank=True)
     uni_website = models.URLField(verbose_name="University Website", blank=True)
     uni_email = models.EmailField(verbose_name="University Email", blank=True)
@@ -91,6 +94,7 @@ class Application(models.Model):
     father_dob = models.DateField(verbose_name="Father DOB", null=True, blank=True)
     father_phone = models.CharField(max_length=20, verbose_name="Father Phone", blank=True)
     father_job = models.CharField(max_length=255, verbose_name="Father Occupation", blank=True)
+    father_position = models.CharField(max_length=255, verbose_name="Father Position", blank=True)
     
     # FAMILY INFO - MOTHER
     mother_name = models.CharField(max_length=255, verbose_name="Mother Name", blank=True)
@@ -98,6 +102,7 @@ class Application(models.Model):
     mother_dob = models.DateField(verbose_name="Mother DOB", null=True, blank=True)
     mother_phone = models.CharField(max_length=20, verbose_name="Mother Phone", blank=True)
     mother_job = models.CharField(max_length=255, verbose_name="Mother Occupation", blank=True)
+    mother_position = models.CharField(max_length=255, verbose_name="Mother Position", blank=True)
     
     # FINANCIAL SPONSOR INFO
     sponsor_name = models.CharField(max_length=255, verbose_name="Sponsor Name", blank=True)
