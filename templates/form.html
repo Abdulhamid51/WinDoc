@@ -298,8 +298,13 @@
                         <label class="question-title">Education Level <span class="required-asterisk">*</span></label>
                         <div class="option-group" style="flex-direction: row; gap: 24px;">
                             <label class="option-label">
+                                <input type="radio" name="education_level" value="school" class="option-input"
+                                    required onclick="loadUniversities('school')">
+                                School
+                            </label>
+                            <label class="option-label">
                                 <input type="radio" name="education_level" value="bachelor" class="option-input"
-                                    required onclick="loadUniversities('bachelor')">
+                                    onclick="loadUniversities('bachelor')">
                                 Bakalavr
                             </label>
                             <label class="option-label">
@@ -344,10 +349,24 @@
                         </div>
                     </div>
                     <div>
+                        <label for="grad_date" class="question-title">Graduation Date <span class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="date" id="grad_date" name="grad_date" class="text-input" required>
+                        </div>
+                    </div>
+                    <div>
                         <label for="uni_phone" class="question-title">University Phone <span
                                 class="required-asterisk">*</span></label>
                         <div class="input-group">
                             <input type="text" id="uni_phone" name="uni_phone" class="text-input"
+                                placeholder="Your answer" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="uni_email" class="question-title">University Email <span
+                                class="required-asterisk">*</span></label>
+                        <div class="input-group">
+                            <input type="email" id="uni_email" name="uni_email" class="text-input"
                                 placeholder="Your answer" required>
                         </div>
                     </div>
@@ -359,10 +378,10 @@
                         </div>
                     </div>
                     <div>
-                        <label for="uni_email" class="question-title">University Email <span
+                        <label for="diplom_number" class="question-title">Diploma Number <span
                                 class="required-asterisk">*</span></label>
                         <div class="input-group">
-                            <input type="email" id="uni_email" name="uni_email" class="text-input"
+                            <input type="text" id="diplom_number" name="diplom_number" class="text-input"
                                 placeholder="Your answer" required>
                         </div>
                     </div>
@@ -375,33 +394,54 @@
                         </div>
                     </div>
                     <div>
-                        <label for="diplom_number" class="question-title">Diploma Number <span
-                                class="required-asterisk">*</span></label>
-                        <div class="input-group">
-                            <input type="text" id="diplom_number" name="diplom_number" class="text-input"
-                                placeholder="Your answer" required>
-                        </div>
-                    </div>
-                    <div>
                         <label for="gpa" class="question-title">GPA <span class="required-asterisk">*</span></label>
                         <div class="input-group">
                             <input type="number" step="0.01" id="gpa" name="gpa" class="text-input"
                                 placeholder="Your answer" required>
                         </div>
                     </div>
-                    <div>
-                        <label for="grad_date" class="question-title">Graduation Date <span
-                                class="required-asterisk">*</span></label>
-                        <div class="input-group">
-                            <input type="date" id="grad_date" name="grad_date" class="text-input" required>
+
+                    <!-- Previous Major 1 row -->
+                    <div class="full-width" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px;">
+                        <div>
+                            <label for="prev_major1" class="question-title">Previous Major 1</label>
+                            <div class="input-group">
+                                <input type="text" id="prev_major1" name="prev_major1" class="text-input" placeholder="Your answer">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="prev_major1_entry" class="question-title">Entry Date</label>
+                            <div class="input-group">
+                                <input type="date" id="prev_major1_entry" name="prev_major1_entry" class="text-input">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="prev_major1_grad" class="question-title">Graduated Date</label>
+                            <div class="input-group">
+                                <input type="date" id="prev_major1_grad" name="prev_major1_grad" class="text-input">
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <label for="prev_major" class="question-title">Previous Major <span
-                                class="required-asterisk">*</span></label>
-                        <div class="input-group">
-                            <input type="text" id="prev_major" name="prev_major" class="text-input"
-                                placeholder="Your answer" required>
+
+                    <!-- Previous Major 2 row -->
+                    <div class="full-width" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px; border-top: 1px solid #f0f0f0; padding-top: 16px; margin-bottom: 8px;">
+                        <div>
+                            <label for="prev_major2" class="question-title">Previous Major 2</label>
+                            <div class="input-group">
+                                <input type="text" id="prev_major2" name="prev_major2" class="text-input" placeholder="Your answer">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="prev_major2_entry" class="question-title">Entry Date</label>
+                            <div class="input-group">
+                                <input type="date" id="prev_major2_entry" name="prev_major2_entry" class="text-input">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="prev_major2_grad" class="question-title">Graduated Date</label>
+                            <div class="input-group">
+                                <input type="date" id="prev_major2_grad" name="prev_major2_grad" class="text-input">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -919,7 +959,12 @@
                     document.getElementById('diplom_number').value = data.diplom_number || '';
                     document.getElementById('gpa').value = data.gpa || '';
                     document.getElementById('grad_date').value = data.grad_date || '';
-                    document.getElementById('prev_major').value = data.prev_major || '';
+                    document.getElementById('prev_major1').value = data.prev_major1 || '';
+                    document.getElementById('prev_major1_entry').value = data.prev_major1_entry || '';
+                    document.getElementById('prev_major1_grad').value = data.prev_major1_grad || '';
+                    document.getElementById('prev_major2').value = data.prev_major2 || '';
+                    document.getElementById('prev_major2_entry').value = data.prev_major2_entry || '';
+                    document.getElementById('prev_major2_grad').value = data.prev_major2_grad || '';
 
                     // FATHER
                     document.getElementById('father_name').value = data.father_name || '';
@@ -1041,12 +1086,13 @@
             <form id="uni-modal-form">
                 <input type="hidden" id="modal-uni-id">
                 <div style="margin-bottom: 16px;">
-                    <label class="question-title" style="font-size: 14px;">University Name <span class="required-asterisk">*</span></label>
+                    <label class="question-title" style="font-size: 14px;">Name (School, College or University) <span class="required-asterisk">*</span></label>
                     <input type="text" id="modal-uni-name" class="text-input" required>
                 </div>
                 <div style="margin-bottom: 16px;">
                     <label class="question-title" style="font-size: 14px;">Education Level <span class="required-asterisk">*</span></label>
                     <select id="modal-uni-level" class="text-input" style="height: 40px;" required>
+                        <option value="school">School</option>
                         <option value="bachelor">Bakalavr</option>
                         <option value="master">Magistr</option>
                         <option value="college">College</option>

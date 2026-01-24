@@ -181,13 +181,14 @@
                     </tr>
                     <tr>
                         <th>Department</th>
-                        <td>{{ app.prev_major|default:"-" }}</td>
+                        <td>{{ app.prev_major1|default:"-" }}</td>
                         <th>Major</th>
-                        <td>{{ app.prev_major|default:"-" }}</td>
+                        <td>{{ app.prev_major1|default:"-" }}</td>
                     </tr>
                     <tr>
                         <th>Course</th>
                         <td colspan="3">
+                            <span class="pdf-checkbox {% if app.education_level == 'school' %}checked{% endif %}"></span> School &nbsp;
                             <span class="pdf-checkbox {% if app.education_level == 'bachelor' %}checked{% endif %}"></span> Bachelor &nbsp;
                             <span class="pdf-checkbox {% if app.education_level == 'master' %}checked{% endif %}"></span> Master &nbsp;
                             <span class="pdf-checkbox {% if app.education_level == 'college' %}checked{% endif %}"></span> College
@@ -241,10 +242,8 @@
                         <td colspan="3">{{ app.uni_name|default:"-" }}</td>
                     </tr>
                     <tr>
-                        <th>Previous Major</th>
-                        <td>{{ app.prev_major }}</td>
                         <th>Degree Obtained</th>
-                        <td>{{ app.get_education_level_display }}’s</td>
+                        <td colspan="3">{{ app.get_education_level_display }}’s</td>
                     </tr>
                     <tr>
                         <th>Entry Date</th>
@@ -264,6 +263,18 @@
                         <th>Diploma Number</th>
                         <td>{{ app.diplom_number|default:"-" }}</td>
                     </tr>
+                    {% if app.prev_major1 %}
+                    <tr>
+                        <th>Previous Major 1</th>
+                        <td colspan="3">{{ app.prev_major1 }} ({{ app.prev_major1_entry|date:"Y-m-d" }} ~ {{ app.prev_major1_grad|date:"Y-m-d" }})</td>
+                    </tr>
+                    {% endif %}
+                    {% if app.prev_major2 %}
+                    <tr>
+                        <th>Previous Major 2</th>
+                        <td colspan="3">{{ app.prev_major2 }} ({{ app.prev_major2_entry|date:"Y-m-d" }} ~ {{ app.prev_major2_grad|date:"Y-m-d" }})</td>
+                    </tr>
+                    {% endif %}
                 </table>
 
                 {% if app.test_type %}

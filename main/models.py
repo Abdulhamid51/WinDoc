@@ -72,6 +72,7 @@ class Application(models.Model):
     
     # UNIVERSITY INFO
     EDUCATION_LEVEL_CHOICES = [
+        ('school', 'School'),
         ('bachelor', 'Bakalavr'),
         ('master', 'Magistr'),
         ('college', 'College'),
@@ -86,7 +87,14 @@ class Application(models.Model):
     diplom_number = models.CharField(max_length=100, verbose_name="Diploma Number", blank=True)
     gpa = models.DecimalField(max_digits=4, decimal_places=2, verbose_name="GPA", default=0)
     grad_date = models.DateField(verbose_name="Graduation Date", blank=True, null=True)
-    prev_major = models.CharField(max_length=255, verbose_name="Previous Major", blank=True)
+    # NEW MAJOR FIELDS
+    prev_major1 = models.CharField(max_length=255, verbose_name="Previous Major 1", blank=True)
+    prev_major1_entry = models.DateField(verbose_name="Major 1 Entry Date", blank=True, null=True)
+    prev_major1_grad = models.DateField(verbose_name="Major 1 Graduation Date", blank=True, null=True)
+    
+    prev_major2 = models.CharField(max_length=255, verbose_name="Previous Major 2", blank=True)
+    prev_major2_entry = models.DateField(verbose_name="Major 2 Entry Date", blank=True, null=True)
+    prev_major2_grad = models.DateField(verbose_name="Major 2 Graduation Date", blank=True, null=True)
     
     # FAMILY INFO - FATHER
     father_name = models.CharField(max_length=255, verbose_name="Father Name")
@@ -137,6 +145,7 @@ class Application(models.Model):
 
 class University(models.Model):
     EDUCATION_LEVEL_CHOICES = [
+        ('school', 'School'),
         ('bachelor', 'Bakalavr'),
         ('master', 'Magistr'),
         ('college', 'College'),
